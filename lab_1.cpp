@@ -1,34 +1,14 @@
-// CSCI 311
-// Lab 1 Functions
-// Author: Tanner Hart
-
 #include <iostream>
 #include <math.h>
 #include <chrono>
 #include <vector>
 #include <set>
+#include <algorithm>
+#include <string>
 using namespace std;
 
-/**************************
- * Your solutions go here *
- * ************************/
-int collatzLength(int n){
-  int length = 0;
-  while (n != 1) {
-   if (n%2==0) {
-     n = n/2;
-} else {
-   n = 3*n+1;
-}
-length++;
-  }
-
-return length;
-
-}
 
 void printStats(const vector<int> &v){
-
   if (v.empty()) {
     cout << "Empty vector" << endl;
   }
@@ -43,9 +23,7 @@ void printStats(const vector<int> &v){
     }
 
     double mean = sum / v.size();
-     if (!v.empty()) {
-        cout << min << " " << mean << " " << max << endl;
-     }
+    cout << min << " " << mean << " " << max << endl;
 }
 
 int sumMultiples(const vector<int> &v, int n){
@@ -63,18 +41,26 @@ int sumMultiples(const vector<int> &v, int n){
     return sum;
 }
 
-void greaterThanK(vector<int> &v, int k){
-     for (auto it = v.begin(); it != v.end(); ) {
-        if (*it <= k) {
-                it = v.erase(it);
+int collatzLength(int n){
+    int length = 0;
+
+    while (n != 1) {
+        if (n % 2 == 0) {
+            n = n / 2;
         } else {
-                it++;
+            n = 3 * n + 1;
         }
-     }
+        length++;
+    }   
+    return length; 
+}
+
+void greaterThanK(vector<int> &v, int k){
+     v.erase(remove_if(v.begin(), v.end(), [k](int value) -> bool { return value <= k; }), v.end());
 }
 
 bool isSubarray(const vector<string> &a, const vector<string> &b){
-     if (a.empty() || a.size() > b.size()) return false;
+    if (a.empty() || a.size() > b.size()) return false;
 
     for (size_t i = 0; i <= b.size() - a.size(); i++) {
         bool match = true;
@@ -90,44 +76,44 @@ bool isSubarray(const vector<string> &a, const vector<string> &b){
     return false;
 }
 
+
 bool isPrimeA(int n){
-     if (n <= 1) return false;
-     for (int i = 2; i < n; i++) {
+    if (n <= 1) return false;
+    for (int i = 2; i < n; i++) {
         if (n % i == 0) return false;
-     }
-     return true;
+    }
+    return true;
 }
 
-int sumPrimesA(int n){
-     int sum = 0;
-     for (int i = 2; i< n; i++) {
+int sumPrimesA(int n) {
+    int sum = 0;
+    for (int i = 2; i < n; i++) {
         if (isPrimeA(i)) sum += i;
-     }
-     return sum;
+    }
+    return sum;
 }
 
 bool isPrimeB(int n){
-     if (n <= 1) return false;
-     for (int i = 2; i<= sqrt(n); i++) {
-        if (n % i == 0) return false;
-     }
-     return true;
+  if (n <= 1) return false;
+  for (int i = 2; i <= sqrt(n); i++) {
+    if (n % i ==0) return false;
+  }
+  return false;
 }
 
 int sumPrimesB(int n){
-     int sum = 0;
-     for (int i = 2; i<n; i++) {
-        if (isPrimeB(i)) sum += i;
-     }
-     return sum;
-
+  int sum = 0;
+  for (int i = 2; i < n; i++) {
+    if (isPrimeB(i)) sum += i;
+  }
+  return sum;
 }
 
 int sieveOfEratosthenes(int n){
-  if (n < 2) return 0;
-
+  if (n <= 2) return 0;
   vector<int> nums(n-2);
-  for (int i = 0; i < n - 2; i++) {
+
+  for (int i = 0; i < n; i++) {
     nums[i] = i + 2;
   }
 
@@ -139,7 +125,9 @@ int sieveOfEratosthenes(int n){
 
   int sum = 0;
   for(int num : nums) {
-    if (num != 0) sum += num;
+    if (num != 0) {
+        sum += num;
+    }
   }
 
   return sum;
