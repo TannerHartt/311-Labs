@@ -5,3 +5,9 @@ Lab3/Lab3Tests
 Lab4/Lab4Tests
 */runTests
 */runTests2
+*.out
+*.exe
+makefile
+*.json
+*.txt
+project1/sample plotData related files
