@@ -7,7 +7,12 @@
 #include <algorithm>
 #include <tuple>
 #include <numeric>
+#include <fstream>
 using namespace std;
+
+
+const double ONEMILLION = 1000000.00;
+
 
 /******************************************************************************
  * Generate a vector of random integers in a given range. The ends *
@@ -30,6 +35,11 @@ vector<int> randomVector()
 {
     return randomVector(100, 0, 300);
 }
+vector<int> randomVector(int size)
+{
+    return randomVector(size, 0, 15000);
+}
+
 
 /******************************************************************
  * Calculate the sample standard deviation of a vector of doubles *
@@ -128,8 +138,6 @@ void mergeSort(vector<int> &v) {
 }
 
 
-
-
 void bubbleSort(vector<int> &v) {
     for (int i = v.size() - 1; i > 0; i--)
     {
@@ -190,8 +198,7 @@ int pivot(vector<int> &v, int pivotIndex, int endIndex) {
 }
 
 void quickSort(vector<int> &v, int leftIndex, int rightIndex) {
-    if (leftIndex >= rightIndex)
-        return;
+    if (leftIndex >= rightIndex) return;
     int pivotIndex = pivot(v, leftIndex, rightIndex);
     quickSort(v, leftIndex, pivotIndex - 1);
     quickSort(v, pivotIndex + 1, rightIndex);
@@ -199,4 +206,167 @@ void quickSort(vector<int> &v, int leftIndex, int rightIndex) {
 
 void quickSort(vector<int> &v) {
     quickSort(v, 0, v.size() - 1);
+}
+
+
+bool isSorted(vector<int> v) {
+    for (int val = 0; val < v.size() - 1; val++)
+    {
+        if (v[val] > v[val + 1])
+            return false;
+    }
+    return true;
+}
+tuple<double, double, double> calculate(vector<double> &v) {
+    if (v.empty()) {
+        return make_tuple(0.0, 0.0, 0.0);
+    }
+    double min = *min_element(v.begin(), v.end());
+    double max = *max_element(v.begin(), v.end());
+    double mean = accumulate(v.begin(), v.end(), 0.0) / v.size();
+
+    return make_tuple(min, mean, max);
+}
+
+void printStats(vector<int> &v, vector<double> &d, double totalTime, string sortingMethod) {
+    tuple<double, double, double> result = calculate(d);
+    double min = get<0>(result);
+    double mean = get<1>(result);
+    double max = get<2>(result);
+
+    cout << "\n************************\n";
+    cout << sortingMethod << " sort on 10 vectors of length " << v.size() << endl;
+    cout << (isSorted(v) ? "Sorting Successful" : "Sorting Unsuccessful");
+    cout << "\nTime taken: " << (totalTime / ONEMILLION) << "ms";
+    cout << "\nMinimum: " << (min / ONEMILLION) << "; Mean: "<< (mean / ONEMILLION) << "; Standard deviation: " << (sampleSD(d) / ONEMILLION) << "; Maximum: "<< (max / ONEMILLION) << endl;
+    cout << "\n************************\n"; 
+}
+
+
+void runSpecificSort(vector<int> &v, char sortFunctionOfChoice) {
+    switch (sortFunctionOfChoice) {
+        case 'i': // insertion sort
+            insertionSort(v);
+            break;
+        case 'b': // bubble sort
+            bubbleSort(v);
+            break;
+        case 's': // selection sort
+            selectionSort(v);
+            break;
+        case 'q': // quicksort
+            quickSort(v);
+            break;
+        case 'm': // Merge Sort
+            mergeSort(v);
+            break;
+        default:
+            cout << "Sorting method not specified" << endl;
+    }
+}
+
+
+void runAllSorts(vector<int> &v, vector<double> &timesList) {
+
+    cout << "\n========================= Start of Quick sort =========================\n";
+    for (int i = 0; i < 10; i++) {
+        v = randomVector();
+        auto start = chrono::high_resolution_clock::now();
+        runSpecificSort(v, 'q');
+        auto end = chrono::high_resolution_clock::now();
+        auto total = (end - start).count();
+        timesList.push_back(total); 
+        printStats(v, timesList, total, "Quick");
+    }
+    timesList.clear();
+    v.clear();
+    cout << "\n========================= End of Quick sort =========================\n";
+
+
+
+    cout << "\n========================= Start of Bubble sort =========================\n";
+    for (int i = 0; i < 10; i++) {
+        v = randomVector();
+        auto start = chrono::high_resolution_clock::now();
+        runSpecificSort(v, 'b');
+        auto end = chrono::high_resolution_clock::now();
+        auto total = (end - start).count();
+        timesList.push_back(total); 
+        printStats(v, timesList, total, "Bubble");
+    }
+    timesList.clear();
+    v.clear();
+    cout << "\n========================= End of Bubble Sort =========================\n";
+
+    
+
+    cout << "\n========================= Start of Selection Sort =========================\n";
+    for (int i = 0; i < 10; i++) {
+        v = randomVector();
+        auto start = chrono::high_resolution_clock::now();
+        runSpecificSort(v, 's');
+        auto end = chrono::high_resolution_clock::now();
+        auto total = (end - start).count();
+        timesList.push_back(total); 
+        printStats(v, timesList, total, "Selection");
+    }
+    timesList.clear();
+    v.clear();
+    cout << "\n========================= End of Selection Sort =========================\n";
+
+
+
+    cout << "\n========================= Start of Insertion Sort =========================\n";
+    for (int i = 0; i < 10; i++) {
+        v = randomVector();
+        auto start = chrono::high_resolution_clock::now();
+        runSpecificSort(v, 'i');
+        auto end = chrono::high_resolution_clock::now();
+        auto total = (end - start).count();
+        timesList.push_back(total); 
+        printStats(v, timesList, total, "Insertion");
+    }
+    timesList.clear();
+    v.clear();
+    cout << "\n========================= End of Insertion Sort =========================\n";
+
+
+    cout << "\n========================= Start of Merge Sort =========================\n";
+    for (int i = 0; i < 10; i++) {
+        v = randomVector();
+        auto start = chrono::high_resolution_clock::now();
+        runSpecificSort(v, 'm');
+        auto end = chrono::high_resolution_clock::now();
+        auto total = (end - start).count();
+        timesList.push_back(total); 
+        printStats(v, timesList, total, "Merge");
+    }
+    timesList.clear();
+    v.clear();
+    cout << "\n========================= End of Merge Sort =========================\n"; 
+}
+
+
+void runAverageCases(vector<int> &v, vector<double> &timesList, vector<size_t> &sizes) {
+    ofstream outputFile("outputs/averagecases.txt", ios::app);
+
+    if (!outputFile.is_open()) {
+        cerr << "Failed to open the file for writing.\n";
+        return;
+    }
+
+    for (size_t size : sizes) {
+        v = randomVector(size);
+
+        auto start = chrono::high_resolution_clock::now();
+        runSpecificSort(v, 's');
+        auto end = chrono::high_resolution_clock::now();
+        auto total = ((end - start).count()) / ONEMILLION;
+        timesList.push_back(total);
+        outputFile << "Size: " << size << ", Time taken: " << total << " ms\n";
+        printStats(v, timesList, total, "Selection");
+    }
+    outputFile.close();
+    timesList.clear();
+    v.clear();
 }
