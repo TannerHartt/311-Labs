@@ -1,14 +1,5 @@
-#include <iostream>
-#include <memory>
-#include <vector>
-#include <time.h>
-#include <math.h>
-#include <chrono>
-#include <algorithm>
-#include <tuple>
-#include <numeric>
-#include <fstream>
-using namespace std;
+#include "sorts.cpp"
+
 
 
 const double ONEMILLION = 1000000.00;
@@ -76,147 +67,6 @@ void printVector(vector<double> v)
     }
 }
 
-void merge(vector<int> &v, int leftIndex, int midIndex, int rightIndex) {
-    int leftSize = midIndex - leftIndex + 1;
-    int rightSize = rightIndex - midIndex;
-    vector<int> leftArray(leftSize);
-    vector<int> rightArray(rightSize);
-
-    for (int i = 0; i < leftSize; i++)
-    {
-        leftArray[i] = v[leftIndex + i];
-    }
-    for (int j = 0; j < rightSize; j++)
-    {
-        rightArray[j] = v[midIndex + 1 + j];
-    }
-
-    int index = leftIndex;
-    int i = 0;
-    int j = 0;
-    while (i < leftSize && j < rightSize)
-    {
-        if (leftArray[i] <= rightArray[j])
-        {
-            v[index] = leftArray[i];
-            index++;
-            i++;
-        }
-        else
-        {
-            v[index] = rightArray[j];
-            index++;
-            j++;
-        }
-    }
-    while (i < leftSize)
-    {
-        v[index] = leftArray[i];
-        index++;
-        i++;
-    }
-    while (j < rightSize)
-    {
-        v[index] = rightArray[j];
-        index++;
-        j++;
-    }
-}
-
-void mergeSort(vector<int> &v, int leftIndex, int rightIndex) {
-    if (leftIndex >= rightIndex)
-        return;
-
-    int midIndex = leftIndex + (rightIndex - leftIndex) / 2;
-    mergeSort(v, leftIndex, midIndex);
-    mergeSort(v, midIndex + 1, rightIndex);
-    merge(v, leftIndex, midIndex, rightIndex);
-}
-
-void mergeSort(vector<int> &v) {
-    mergeSort(v, 0, v.size() - 1);
-}
-
-
-void bubbleSort(vector<int> &v) {
-    for (int i = v.size() - 1; i > 0; i--)
-    {
-        for (int j = 0; j < i; j++)
-        {
-            if (v[j] > v[j + 1])
-            {
-                // int temp = v[j];
-                // v[j] = v[j + 1];
-                // v[j + 1] = temp;
-                swap(v[j], v[j + 1]);
-            }
-        }
-    }
-}
-
-void insertionSort(vector<int> &v) {
-    for (int i = 1; i < v.size(); i++)
-    {
-        int temp = v[i];
-        int j = i - 1;
-        while (j > -1 && temp < v[j])
-        {
-            v[j + 1] = v[j];
-            v[j] = temp;
-            j--;
-        }
-    }
-}
-
-void selectionSort(vector<int> &v) {
-    for (int i = 0; i < v.size(); i++)
-    {
-        int minIndex = i;
-        for (int j = i + 1; j < v.size(); j++)
-        {
-            // if (v[j] > v[minIndex]) reverse order sorted
-            if (v[j] < v[minIndex])
-                minIndex = j;
-        }
-        if (i != minIndex)
-            swap(v[i], v[minIndex]);
-    }
-}
-
-int pivot(vector<int> &v, int pivotIndex, int endIndex) {
-    int swapIndex = pivotIndex;
-    for (int i = pivotIndex + 1; i <= endIndex; i++)
-    {
-        if (v[i] < v[pivotIndex])
-        {
-            swapIndex++;
-            swap(v[swapIndex], v[i]);
-        }
-    }
-    swap(v[pivotIndex], v[swapIndex]);
-    return swapIndex;
-}
-
-void quickSort(vector<int> &v, int leftIndex, int rightIndex) {
-    if (leftIndex >= rightIndex) return;
-    int pivotIndex = pivot(v, leftIndex, rightIndex);
-    quickSort(v, leftIndex, pivotIndex - 1);
-    quickSort(v, pivotIndex + 1, rightIndex);
-}
-
-void quickSort(vector<int> &v) {
-    quickSort(v, 0, v.size() - 1);
-}
-
-
-bool isSorted(vector<int> v) {
-    for (int val = 0; val < v.size() - 1; val++)
-    {
-        if (v[val] > v[val + 1])
-            return false;
-    }
-    return true;
-}
 tuple<double, double, double> calculate(vector<double> &v) {
     if (v.empty()) {
         return make_tuple(0.0, 0.0, 0.0);
@@ -233,13 +83,21 @@ void printStats(vector<int> &v, vector<double> &d, double totalTime, string sort
     double min = get<0>(result);
     double mean = get<1>(result);
     double max = get<2>(result);
+    ofstream outputFile("outputs/test.txt", ios::app);
 
-    cout << "\n************************\n";
-    cout << sortingMethod << " sort on 10 vectors of length " << v.size() << endl;
-    cout << (isSorted(v) ? "Sorting Successful" : "Sorting Unsuccessful");
-    cout << "\nTime taken: " << (totalTime / ONEMILLION) << "ms";
-    cout << "\nMinimum: " << (min / ONEMILLION) << "; Mean: "<< (mean / ONEMILLION) << "; Standard deviation: " << (sampleSD(d) / ONEMILLION) << "; Maximum: "<< (max / ONEMILLION) << endl;
-    cout << "\n************************\n"; 
+    if (!outputFile.is_open()) {
+        cerr << "Failed to open the file for writing.\n";
+        return;
+    }
+
+    outputFile << "\n************************\n";
+    outputFile << sortingMethod << " sort on 10 vectors of length " << v.size() << endl;
+    outputFile << (isSorted(v) ? "Sorting Successful" : "Sorting Unsuccessful");
+    outputFile << "\nTime taken: " << (totalTime / ONEMILLION) << "ms";
+    outputFile << "\nMinimum: " << (min / ONEMILLION) << "; Mean: "<< (mean / ONEMILLION) << "; Standard deviation: " << (sampleSD(d) / ONEMILLION) << "; Maximum: "<< (max / ONEMILLION) << endl;
+    outputFile << "\n************************\n"; 
+
+    outputFile.close();
 }
 
 
@@ -356,17 +214,22 @@ void runAverageCases(vector<int> &v, vector<double> &timesList, vector<size_t> &
     }
 
     for (size_t size : sizes) {
-        v = randomVector(size);
-
-        auto start = chrono::high_resolution_clock::now();
-        runSpecificSort(v, 's');
-        auto end = chrono::high_resolution_clock::now();
-        auto total = ((end - start).count()) / ONEMILLION;
-        timesList.push_back(total);
-        outputFile << "Size: " << size << ", Time taken: " << total << " ms\n";
-        printStats(v, timesList, total, "Selection");
+        for (int i = 0; i < 50; i++) {
+            v = randomVector(size);
+            auto start = chrono::high_resolution_clock::now();
+            runSpecificSort(v, 'q');
+            auto end = chrono::high_resolution_clock::now();
+            auto total = ((end - start).count()) / ONEMILLION;
+            timesList.push_back(total);
+            outputFile << "Size: " << size << ", Time taken: " << total << " ms\n";
+            printStats(v, timesList, total, "Quick");
+        }
+        
+        timesList.clear();
+        v.clear();
     }
     outputFile.close();
-    timesList.clear();
-    v.clear();
+
+// TODO Continue writing this funciton that runs the average cases for 50 vectors and saves the
+// outputs to a appropriately named file. Consider more on how outputs should be structured.
 }
