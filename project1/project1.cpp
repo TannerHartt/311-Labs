@@ -1,7 +1,5 @@
 #include "helper.cpp"
 
-
-
 int main()
 {
     srand(time(NULL));

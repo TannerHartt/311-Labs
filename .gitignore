@@ -11,3 +11,9 @@ makefile
 *.json
 *.txt
 project1/sample plotData related files
+*.h
+*.py
+*.csv
+*.pdf
+*.png
+*.zip
