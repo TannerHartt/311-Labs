@@ -9,6 +9,9 @@
 #include <numeric>
 #include <fstream>
 using namespace std;
+const double ONEMILLION = 1000000.00;
+const vector<size_t> sizes = {10, 100, 1000, 5000, 10000};
+
 
 void merge(vector<int> &v, int leftIndex, int midIndex, int rightIndex) {
     int leftSize = midIndex - leftIndex + 1;
@@ -146,8 +149,7 @@ void quickSort(vector<int> &v) {
 bool isSorted(vector<int> v) {
     for (int val = 0; val < v.size() - 1; val++)
     {
-        if (v[val] > v[val + 1])
-            return false;
+        if (v[val] > v[val + 1]) return false;
     }
     return true;
 }

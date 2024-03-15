@@ -1,10 +1,6 @@
 #include "sorts.cpp"
 
 
-
-const double ONEMILLION = 1000000.00;
-
-
 /******************************************************************************
  * Generate a vector of random integers in a given range. The ends *
  * of this range are inclusive. *
@@ -83,7 +79,7 @@ void printStats(vector<int> &v, vector<double> &d, double totalTime, string sort
     double min = get<0>(result);
     double mean = get<1>(result);
     double max = get<2>(result);
-    ofstream outputFile("outputs/test.txt", ios::app);
+    ofstream outputFile("outputs/stats.txt", ios::app);
 
     if (!outputFile.is_open()) {
         cerr << "Failed to open the file for writing.\n";
@@ -127,17 +123,19 @@ void runSpecificSort(vector<int> &v, char sortFunctionOfChoice) {
 void runAllSorts(vector<int> &v, vector<double> &timesList) {
 
     cout << "\n========================= Start of Quick sort =========================\n";
+    double total;
     for (int i = 0; i < 10; i++) {
         v = randomVector();
         auto start = chrono::high_resolution_clock::now();
         runSpecificSort(v, 'q');
         auto end = chrono::high_resolution_clock::now();
-        auto total = (end - start).count();
+        total = (end - start).count();
         timesList.push_back(total); 
-        printStats(v, timesList, total, "Quick");
     }
+    printStats(v, timesList, total, "Quick");
     timesList.clear();
     v.clear();
+    total = 0.0;
     cout << "\n========================= End of Quick sort =========================\n";
 
 
@@ -148,12 +146,13 @@ void runAllSorts(vector<int> &v, vector<double> &timesList) {
         auto start = chrono::high_resolution_clock::now();
         runSpecificSort(v, 'b');
         auto end = chrono::high_resolution_clock::now();
-        auto total = (end - start).count();
+        total = (end - start).count();
         timesList.push_back(total); 
-        printStats(v, timesList, total, "Bubble");
     }
+    printStats(v, timesList, total, "Bubble");
     timesList.clear();
     v.clear();
+    total = 0.0;
     cout << "\n========================= End of Bubble Sort =========================\n";
 
     
@@ -164,12 +163,13 @@ void runAllSorts(vector<int> &v, vector<double> &timesList) {
         auto start = chrono::high_resolution_clock::now();
         runSpecificSort(v, 's');
         auto end = chrono::high_resolution_clock::now();
-        auto total = (end - start).count();
+        total = (end - start).count();
         timesList.push_back(total); 
-        printStats(v, timesList, total, "Selection");
     }
+    printStats(v, timesList, total, "Selection");
     timesList.clear();
     v.clear();
+    total = 0.0;
     cout << "\n========================= End of Selection Sort =========================\n";
 
 
@@ -180,12 +180,13 @@ void runAllSorts(vector<int> &v, vector<double> &timesList) {
         auto start = chrono::high_resolution_clock::now();
         runSpecificSort(v, 'i');
         auto end = chrono::high_resolution_clock::now();
-        auto total = (end - start).count();
+        total = (end - start).count();
         timesList.push_back(total); 
-        printStats(v, timesList, total, "Insertion");
     }
+    printStats(v, timesList, total, "Insertion");
     timesList.clear();
     v.clear();
+    total = 0.0;
     cout << "\n========================= End of Insertion Sort =========================\n";
 
 
@@ -195,18 +196,19 @@ void runAllSorts(vector<int> &v, vector<double> &timesList) {
         auto start = chrono::high_resolution_clock::now();
         runSpecificSort(v, 'm');
         auto end = chrono::high_resolution_clock::now();
-        auto total = (end - start).count();
+        total = (end - start).count();
         timesList.push_back(total); 
-        printStats(v, timesList, total, "Merge");
     }
+    printStats(v, timesList, total, "Merge");
     timesList.clear();
     v.clear();
+    total = 0.0;
     cout << "\n========================= End of Merge Sort =========================\n"; 
 }
 
 
-void runAverageCases(vector<int> &v, vector<double> &timesList, vector<size_t> &sizes) {
-    ofstream outputFile("outputs/averagecases.txt", ios::app);
+void runAverageCases(vector<int> &v, vector<double> &timesList) {
+    ofstream outputFile("outputs/averagecases.csv", ios::app);
 
     if (!outputFile.is_open()) {
         cerr << "Failed to open the file for writing.\n";
@@ -217,19 +219,86 @@ void runAverageCases(vector<int> &v, vector<double> &timesList, vector<size_t> &
         for (int i = 0; i < 50; i++) {
             v = randomVector(size);
             auto start = chrono::high_resolution_clock::now();
-            runSpecificSort(v, 'q');
+            runSpecificSort(v, 'b');
             auto end = chrono::high_resolution_clock::now();
-            auto total = ((end - start).count()) / ONEMILLION;
+            auto total = ((end - start).count()) / ONEMILLION / ONEMILLION;
             timesList.push_back(total);
-            outputFile << "Size: " << size << ", Time taken: " << total << " ms\n";
-            printStats(v, timesList, total, "Quick");
+            outputFile << "Bubble" << "," << size << "," << total << "\n";
+            printStats(v, timesList, total, "Bubble");
         }
-        
         timesList.clear();
         v.clear();
     }
-    outputFile.close();
 
-// TODO Continue writing this funciton that runs the average cases for 50 vectors and saves the
-// outputs to a appropriately named file. Consider more on how outputs should be structured.
+    for (size_t size : sizes) {
+        for (int i = 0; i < 50; i++) {
+            v = randomVector(size);
+            auto start = chrono::high_resolution_clock::now();
+            runSpecificSort(v, 'i');
+            auto end = chrono::high_resolution_clock::now();
+            auto total = ((end - start).count()) / ONEMILLION / ONEMILLION;
+            timesList.push_back(total);
+            outputFile << "Insertion" << "," << size << "," << total << "\n";
+            printStats(v, timesList, total, "Insertion");
+        }
+        timesList.clear();
+        v.clear();
+    }
+
+
+    for (size_t size : sizes) {
+        for (int i = 0; i < 50; i++) {
+            v = randomVector(size);
+            auto start = chrono::high_resolution_clock::now();
+            runSpecificSort(v, 's');
+            auto end = chrono::high_resolution_clock::now();
+            auto total = ((end - start).count()) / ONEMILLION / ONEMILLION;
+            timesList.push_back(total);
+            outputFile << "Selection" << "," << size << "," << total << "\n";
+            printStats(v, timesList, total, "Selection");
+        }
+        timesList.clear();
+        v.clear();
+    }
+
+    for (size_t size : sizes) {
+               for (int i = 0; i < 50; i++) {
+            v = randomVector(size);
+            auto start = chrono::high_resolution_clock::now();
+            runSpecificSort(v, 'q');
+            auto end = chrono::high_resolution_clock::now();
+            auto total = ((end - start).count()) / ONEMILLION / ONEMILLION;
+            timesList.push_back(total);
+            outputFile << "Quick" << "," << size << "," << total << "\n";
+            printStats(v, timesList, total, "Quick");
+        }
+        timesList.clear();
+        v.clear();
+    }       
+    
+    outputFile.close();
+}
+
+void runBestCases(vector<int> &v, vector<double> &timesList) {
+    ofstream outputFile("outputs/bestcases.csv", ios::app);
+
+    if (!outputFile.is_open()) {
+        cerr << "Failed to open the file for writing.\n";
+        return;
+    }
+
+    for (size_t size : sizes) {
+        for (int i = 0; i < 50; i++) {
+            v = randomVector(size);
+            auto start = chrono::high_resolution_clock::now();
+            runSpecificSort(v, 'b');
+            auto end = chrono::high_resolution_clock::now();
+            auto total = ((end - start).count()) / ONEMILLION / ONEMILLION;
+            timesList.push_back(total);
+            outputFile << "Bubble" << "," << size << "," << total << "\n";
+            printStats(v, timesList, total, "Bubble");
+        }
+        timesList.clear();
+        v.clear();
+    }
 }
