@@ -27,6 +27,29 @@ vector<int> randomVector(int size)
     return randomVector(size, 0, 15000);
 }
 
+vector<int> sortedVector(int size, int low, int high)
+{
+    vector<int> v(size, 0);
+    for (int i = 0; i < size; i++)
+    {
+        v[i] = rand() % (high - low + 1) + low;
+    }
+    sort(v.begin(), v.end());
+    return v;
+}
+vector<int> sortedVector(int size)
+{
+    return sortedVector(size, 0, 15000);
+}
+
+vector<int> createReverseSortedVector(int size) {
+    vector<int> v(size);
+    for (int i = 0; i < size; ++i)
+        v[i] = i;
+
+    reverse(v.begin(), v.end());
+    return v;
+}
 
 /******************************************************************
  * Calculate the sample standard deviation of a vector of doubles *
@@ -124,6 +147,7 @@ void runAllSorts(vector<int> &v, vector<double> &timesList) {
 
     cout << "\n========================= Start of Quick sort =========================\n";
     double total;
+
     for (int i = 0; i < 10; i++) {
         v = randomVector();
         auto start = chrono::high_resolution_clock::now();
@@ -207,6 +231,73 @@ void runAllSorts(vector<int> &v, vector<double> &timesList) {
 }
 
 
+void runWorstCases(vector<int> &v, vector<double> &timesList) {
+    ofstream outputFile("outputs/worstcases.csv", ios::app);
+
+    if (!outputFile.is_open()) {
+        cerr << "Failed to open the file for writing.\n";
+        return;
+    }
+
+    for (size_t size : sizes) { // Bubble sort
+        for (int i = 0; i < 50; i++) {
+            v = createReverseSortedVector(size);
+            auto start = chrono::high_resolution_clock::now();
+            runSpecificSort(v, 'b');
+            auto end = chrono::high_resolution_clock::now();
+            auto total = ((end - start).count()) / ONEMILLION / ONEMILLION; // convert nanoseconds to seconds
+            timesList.push_back(total);
+            outputFile << "Bubble" << "," << size << "," << total << "\n";
+        }
+        timesList.clear();
+        v.clear();
+    }
+
+    for (size_t size : sizes) { // Insertion sort
+        for (int i = 0; i < 50; i++) {
+            v = createReverseSortedVector(size);
+            auto start = chrono::high_resolution_clock::now();
+            runSpecificSort(v, 'i');
+            auto end = chrono::high_resolution_clock::now();
+            auto total = ((end - start).count()) / ONEMILLION / ONEMILLION; // convert nanoseconds to seconds
+            timesList.push_back(total);
+            outputFile << "Insertion" << "," << size << "," << total << "\n";
+        }
+        timesList.clear();
+        v.clear();
+    }
+
+    for (size_t size : sizes) { // Selection sort
+        for (int i = 0; i < 50; i++) {
+            v = createReverseSortedVector(size);
+            auto start = chrono::high_resolution_clock::now();
+            runSpecificSort(v, 's');
+            auto end = chrono::high_resolution_clock::now();
+            auto total = ((end - start).count()) / ONEMILLION / ONEMILLION; // convert nanoseconds to seconds
+            timesList.push_back(total);
+            outputFile << "Selection" << "," << size << "," << total << "\n";
+        }
+        timesList.clear();
+        v.clear();
+    }
+
+    for (size_t size : sizes) { // Quick sort
+        for (int i = 0; i < 50; i++) {
+            v = createReverseSortedVector(size);
+            auto start = chrono::high_resolution_clock::now();
+            runSpecificSort(v, 'q');
+            auto end = chrono::high_resolution_clock::now();
+            auto total = ((end - start).count()) / ONEMILLION / ONEMILLION; // convert nanoseconds to seconds
+            timesList.push_back(total);
+            outputFile << "Quick" << "," << size << "," << total << "\n";
+        }
+        timesList.clear();
+        v.clear();
+    }
+    outputFile.close();
+}
+
+
 void runAverageCases(vector<int> &v, vector<double> &timesList) {
     ofstream outputFile("outputs/averagecases.csv", ios::app);
 
@@ -215,7 +306,7 @@ void runAverageCases(vector<int> &v, vector<double> &timesList) {
         return;
     }
 
-    for (size_t size : sizes) {
+    for (size_t size : sizes) { // Bubble sort
         for (int i = 0; i < 50; i++) {
             v = randomVector(size);
             auto start = chrono::high_resolution_clock::now();
@@ -224,13 +315,12 @@ void runAverageCases(vector<int> &v, vector<double> &timesList) {
             auto total = ((end - start).count()) / ONEMILLION / ONEMILLION;
             timesList.push_back(total);
             outputFile << "Bubble" << "," << size << "," << total << "\n";
-            printStats(v, timesList, total, "Bubble");
         }
         timesList.clear();
         v.clear();
     }
 
-    for (size_t size : sizes) {
+    for (size_t size : sizes) { // Insertion sort
         for (int i = 0; i < 50; i++) {
             v = randomVector(size);
             auto start = chrono::high_resolution_clock::now();
@@ -239,14 +329,13 @@ void runAverageCases(vector<int> &v, vector<double> &timesList) {
             auto total = ((end - start).count()) / ONEMILLION / ONEMILLION;
             timesList.push_back(total);
             outputFile << "Insertion" << "," << size << "," << total << "\n";
-            printStats(v, timesList, total, "Insertion");
         }
         timesList.clear();
         v.clear();
     }
 
 
-    for (size_t size : sizes) {
+    for (size_t size : sizes) { // Selection sort
         for (int i = 0; i < 50; i++) {
             v = randomVector(size);
             auto start = chrono::high_resolution_clock::now();
@@ -255,14 +344,13 @@ void runAverageCases(vector<int> &v, vector<double> &timesList) {
             auto total = ((end - start).count()) / ONEMILLION / ONEMILLION;
             timesList.push_back(total);
             outputFile << "Selection" << "," << size << "," << total << "\n";
-            printStats(v, timesList, total, "Selection");
         }
         timesList.clear();
         v.clear();
     }
 
-    for (size_t size : sizes) {
-               for (int i = 0; i < 50; i++) {
+    for (size_t size : sizes) { // Quick sort
+        for (int i = 0; i < 50; i++) {
             v = randomVector(size);
             auto start = chrono::high_resolution_clock::now();
             runSpecificSort(v, 'q');
@@ -270,7 +358,6 @@ void runAverageCases(vector<int> &v, vector<double> &timesList) {
             auto total = ((end - start).count()) / ONEMILLION / ONEMILLION;
             timesList.push_back(total);
             outputFile << "Quick" << "," << size << "," << total << "\n";
-            printStats(v, timesList, total, "Quick");
         }
         timesList.clear();
         v.clear();
@@ -287,18 +374,62 @@ void runBestCases(vector<int> &v, vector<double> &timesList) {
         return;
     }
 
-    for (size_t size : sizes) {
+    for (size_t size : sizes) { // Bubble sort
         for (int i = 0; i < 50; i++) {
-            v = randomVector(size);
+            v = sortedVector(size);
             auto start = chrono::high_resolution_clock::now();
             runSpecificSort(v, 'b');
             auto end = chrono::high_resolution_clock::now();
             auto total = ((end - start).count()) / ONEMILLION / ONEMILLION;
             timesList.push_back(total);
             outputFile << "Bubble" << "," << size << "," << total << "\n";
-            printStats(v, timesList, total, "Bubble");
         }
         timesList.clear();
         v.clear();
     }
+
+    for (size_t size : sizes) { // Insertion sort
+        for (int i = 0; i < 50; i++) {
+            v = sortedVector(size);
+            auto start = chrono::high_resolution_clock::now();
+            runSpecificSort(v, 'i');
+            auto end = chrono::high_resolution_clock::now();
+            auto total = ((end - start).count()) / ONEMILLION / ONEMILLION;
+            timesList.push_back(total);
+            outputFile << "Insertion" << "," << size << "," << total << "\n";
+        }
+        timesList.clear();
+        v.clear();
+    }
+
+    
+    for (size_t size : sizes) { // Selection sort
+        for (int i = 0; i < 50; i++) {
+            v = sortedVector(size);
+            auto start = chrono::high_resolution_clock::now();
+            runSpecificSort(v, 's');
+            auto end = chrono::high_resolution_clock::now();
+            auto total = ((end - start).count()) / ONEMILLION / ONEMILLION;
+            timesList.push_back(total);
+            outputFile << "Selection" << "," << size << "," << total << "\n";
+        }
+        timesList.clear();
+        v.clear();
+    }
+
+
+    for (size_t size : sizes) { // Quick sort
+        for (int i = 0; i < 50; i++) {
+            v = randomVector(size);
+            auto start = chrono::high_resolution_clock::now();
+            runSpecificSort(v, 'q');
+            auto end = chrono::high_resolution_clock::now();
+            auto total = ((end - start).count()) / ONEMILLION / ONEMILLION;
+            timesList.push_back(total);
+            outputFile << "Quick" << "," << size << "," << total << "\n";
+        }
+        timesList.clear();
+        v.clear();
+    }
+    outputFile.close();
 }
