@@ -8,8 +8,7 @@
  * low, high - int - the range from which to draw random integers (inclusive) *
  * return - vector<int> - a vector of random integers *
  ******************************************************************************/
-vector<int> randomVector(int size, int low, int high)
-{
+vector<int> randomVector(int size, int low, int high) {
     vector<int> v(size, 0);
     for (int i = 0; i < size; i++)
     {
@@ -18,17 +17,14 @@ vector<int> randomVector(int size, int low, int high)
     return v;
 }
 
-vector<int> randomVector()
-{
+vector<int> randomVector() {
     return randomVector(100, 0, 300);
 }
-vector<int> randomVector(int size)
-{
+vector<int> randomVector(int size) {
     return randomVector(size, 0, 15000);
 }
 
-vector<int> sortedVector(int size, int low, int high)
-{
+vector<int> sortedVector(int size, int low, int high) {
     vector<int> v(size, 0);
     for (int i = 0; i < size; i++)
     {
@@ -37,8 +33,7 @@ vector<int> sortedVector(int size, int low, int high)
     sort(v.begin(), v.end());
     return v;
 }
-vector<int> sortedVector(int size)
-{
+vector<int> sortedVector(int size) {
     return sortedVector(size, 0, 15000);
 }
 
@@ -56,8 +51,7 @@ vector<int> createReverseSortedVector(int size) {
  * v - const vector<double> - a vector of doubles *
  * return - double - the sample standard deviation of v *
  ******************************************************************/
-double sampleSD(const vector<double> v)
-{
+double sampleSD(const vector<double> v) {
     double mean = 0;
     for (int i = 0; i < v.size(); i++)
     {
@@ -73,14 +67,12 @@ double sampleSD(const vector<double> v)
     return sqrt(sd);
 }
 
-void printVector(vector<int> v)
-{
+void printVector(vector<int> v) {
     for (auto val : v) {
         cout << val << " ";
     }
 }
-void printVector(vector<double> v)
-{
+void printVector(vector<double> v) {
     for (auto val : v) {
         cout << val << " ";
     }
