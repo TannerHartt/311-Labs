@@ -1,7 +1,8 @@
-Lab1/Lab_1_Test
 *.tar
 */runTests
 */runTests2
+*/src/runTests
+*/src/runTests2
 *.in
 *.out
 *.exe
@@ -17,5 +18,6 @@ project1/sample plotData related files
 *.zip
 *Tests/
 */outputs/
+test.*
 # Ignore Makefiles
 m* 
