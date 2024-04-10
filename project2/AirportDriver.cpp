@@ -12,13 +12,14 @@
 
 //G1_EXCEPTION: Only produce your code as directed in Section A, B, C, and D1_EXCEPTION.
 //G2_EXCEPTION: Do not write anything at the other places in this file.
-//D1_EXCEPTION: Put you names here (on this line):______________________________________
-
+//D1_EXCEPTION: Put you name here (on this line): Tanner Hart
 /***********************************************
 *************SECTION-A-HEADERS******************
 ************************************************/
 //SECTION_A_START: put your header files here using the include directive.
 //G3_EXCEPTION: You can also declare using standard namespace if you like, but do not use any global variable or method.
+
+
 
 
 
