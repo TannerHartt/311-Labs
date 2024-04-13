@@ -3,7 +3,6 @@
 #include "Plane.h"
 using namespace std;
 
-
 /*
 - empty() - returns true if the priority queue is empty and false otherwise.
 • size() - returns the number of elements in the priority queue.
@@ -18,27 +17,27 @@ class Queue {
     int size;
     vector<Plane> v;
 
-
-  
   public:
 
     Queue() {}
     Queue(int s) : size(s) {}
 
-    void empty() { size == 0; }
+    bool empty() { return size == 0; }
     bool isEmpty() { return size == 0; }
     int size() { return size; }
 
-    void push(const Plane &p) {
+    void push(Plane &p) {
         v.push_back(p);
         push_heap(v.begin(), v.end());
         size++;
     }
 
-    void pop() {
+    Plane pop() {
         pop_heap(v.begin(), v.end());
+        Plane p = v.back();
         v.pop_back();
         size--;
+        return p;
     }
 
     Plane peek() {
