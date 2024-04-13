@@ -9,7 +9,7 @@ bool Plane::compare(Plane other) {
     return priority < other.priority;
 }
 
-// Prefferred over the compare fnuction.
+// Preferred over the compare fnuction for compating two plane objects
 bool Plane::operator<(Plane& other) {
     return priority < other.priority;
 }
